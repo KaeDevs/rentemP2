@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "98651598891",
+    "project_id": "rentem-ece16",
+    "storage_bucket": "rentem-ece16.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98651598891:android:bed1c7d3c4e6663349ba6e",
+        "android_client_info": {
+          "package_name": "com.example.rentem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "98651598891-v0itpqjdcq7c6ocpovf8138nbii46fcr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rentem",
+            "certificate_hash": "08365b0c692d5d5bfc54e37177d0b5eb5be21bc2"
+          }
+        },
+        {
+          "client_id": "98651598891-b167jhotv432vv83vbmh3he8thfp73ac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDInSRe0wpA9HLMT-ZnaEvXltNNjdsxTEw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "98651598891-b167jhotv432vv83vbmh3he8thfp73ac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

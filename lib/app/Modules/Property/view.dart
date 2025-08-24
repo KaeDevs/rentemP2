@@ -25,7 +25,7 @@ class PropertyView extends ConsumerWidget {
           ),
         ),
         elevation: 0,
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.secondary,
       ),
       body: ValueListenableBuilder<Box<PropertyModel>>(
         valueListenable: HiveService.propertiesBox.listenable(),
@@ -146,6 +146,34 @@ class PropertyView extends ConsumerWidget {
                           ),
                         ),
                       ),
+                      IconButton(
+        icon: Icon(Icons.delete, color: theme.colorScheme.error),
+        onPressed: () async {
+          final confirm = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text("Delete Property"),
+              content: Text(
+                "Are you sure you want to delete '${property.name ?? 'this property'}'?",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(false),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  child: const Text("Delete"),
+                ),
+              ],
+            ),
+          );
+
+          if (confirm == true) {
+            await property.delete();
+          }
+        },
+      ),
                     ],
                   ),
                 ),

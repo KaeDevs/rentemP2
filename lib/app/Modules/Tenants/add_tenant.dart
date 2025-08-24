@@ -95,7 +95,12 @@ class _AddTenantState extends ConsumerState<AddTenant> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final properties = HiveService.propertiesBox.values.toList();
-    final availableProps = properties.where((p) => !p.isOccupied && p.tenantId == null || (_existingTenant?.propertyId == p.id)).toList();
+    final availableProps = properties.where((p) {
+  final isVacant = !p.isOccupied && p.tenantId == null;
+  final isCurrentAssignment = _existingTenant?.propertyId == p.id;
+  return isVacant || isCurrentAssignment;
+}).toList();
+
     // Preselect currently assigned property when editing
     _selectedPropertyId ??= _existingTenant?.propertyId;
 
@@ -109,7 +114,7 @@ class _AddTenantState extends ConsumerState<AddTenant> {
           ),
         ),
         elevation: 0,
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.secondary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

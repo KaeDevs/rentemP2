@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive/hive.dart';
 import 'package:rentem/app/Data/Models/tenant_model.dart';
+import 'package:rentem/app/Data/Models/property_model.dart';
 import 'package:rentem/main.dart';
 
 import '../../Utils/font_styles.dart';
@@ -39,7 +39,13 @@ class DetailedTenant extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+
+    // fetch property if tenant has one
+    PropertyModel? property;
+    if (tenant.propertyId != null && tenant.propertyId!.isNotEmpty) {
+      property = HiveService.propertiesBox.get(tenant.propertyId);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -49,7 +55,7 @@ class DetailedTenant extends ConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.secondary,
         elevation: 0,
         actions: [
           IconButton(
@@ -100,7 +106,7 @@ class DetailedTenant extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Contact Info Card
             _InfoCard(
               theme: theme,
@@ -118,6 +124,48 @@ class DetailedTenant extends ConsumerWidget {
                     value: tenant.email!,
                   ),
               ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // Property Section
+            Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Associated Property',
+                    style: FontStyles.heading.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (property != null)
+                    ListTile(
+                      leading: Icon(Icons.home, color: theme.colorScheme.primary),
+                      title: Text(property.name ?? property.address),
+                      subtitle: Text(property.address),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {
+                        context.pushNamed(
+                          'propertydetails',
+                          extra: property,
+                        );
+                      },
+                    )
+                  else
+                    const Text(
+                      "No properties associated with this tenant.",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                ],
+              ),
             ),
           ],
         ),

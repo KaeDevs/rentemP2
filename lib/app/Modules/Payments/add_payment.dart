@@ -114,7 +114,7 @@ class _AddPaymentState extends ConsumerState<AddPayment> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.secondary,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -125,26 +125,48 @@ class _AddPaymentState extends ConsumerState<AddPayment> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Tenant Selector
-              DropdownButtonFormField<String>(
-                value: _selectedTenantId,
-                decoration: InputDecoration(
-                  labelText: 'Tenant *',
-                  prefixIcon: Icon(Icons.person, color: theme.colorScheme.primary),
-                ),
-                items: [
-                  for (final t in TenantService().getAll())
-                    DropdownMenuItem(
-                      value: t.id,
-                      child: Text(t.name),
-                    )
-                ],
-                onChanged: (val) {
-                  setState(() {
-                    _selectedTenantId = val;
-                  });
-                },
-                validator: (val) => (val == null || val.isEmpty) ? 'Select tenant' : null,
-              ),
+              // Tenant Selector
+DropdownButtonFormField<String>(
+  value: _selectedTenantId,
+  decoration: InputDecoration(
+    labelText: 'Tenant *',
+    prefixIcon: Icon(Icons.person, color: theme.colorScheme.primary),
+  ),
+  items: [
+    for (final t in TenantService().getAll())
+      DropdownMenuItem(
+        value: t.id,
+        child: Text(t.name),
+      )
+  ],
+  onChanged: (val) {
+    setState(() {
+      _selectedTenantId = val;
+    });
+  },
+  validator: (val) => (val == null || val.isEmpty) ? 'Select tenant' : null,
+),
+const SizedBox(height: 8),
+
+// Property (auto from tenant)
+Builder(
+  builder: (context) {
+    if (_selectedTenantId == null) return const SizedBox();
+    final tenant = TenantService().getById(_selectedTenantId!);
+    if (tenant == null || tenant.propertyId == null) {
+      return Text(
+        'No property linked',
+        style: FontStyles.body.copyWith(color: Colors.red),
+      );
+    }
+    final property = PropertyService().getById(tenant.propertyId!);
+    return Text(
+      'Property: ${property?.name ?? property?.address ?? 'Unknown Property'}',
+      style: FontStyles.body.copyWith(fontWeight: FontWeight.w600),
+    );
+  },
+),
+
               const SizedBox(height: 8),
               if (linkedPropertyName != null)
                 Text('Property: $linkedPropertyName', style: FontStyles.body),

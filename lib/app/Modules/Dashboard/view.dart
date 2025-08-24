@@ -88,14 +88,17 @@ class _DashboardScreenState extends ConsumerState<DashBoardView>
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.secondary,
         title: Text(
           'Dashboard',
           style: FontStyles.heading.copyWith(
             color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.w900,
-          ),
+            letterSpacing: 5
+          )
         ),
         centerTitle: true,
+       
       ),
       body: Container(
         margin: const EdgeInsets.all(16.0),
@@ -151,89 +154,108 @@ class _DashboardScreenState extends ConsumerState<DashBoardView>
 }
 
 class _fourButtons extends ConsumerWidget {
-  const _fourButtons({
+  _fourButtons({
     super.key,
     required this.theme,
   });
 
   final ThemeData theme;
-
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
+    return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: NormalCard(
-                  title: "Property",
-                  icon: Icons.home,
-                  color: theme.colorScheme.primary, 
-                  onTap: () { context.pushNamed("propertyview");},
+        Column(
+          children: [
+            
+            Center(
+              child: Container(
+                height: 200,
+                width: MediaQuery.of(context).size.width * 0.7,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondary.withAlpha(100),
+                  borderRadius: BorderRadius.circular(50)
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: NormalCard(
-                  title: "Tenants",
-                  icon: Icons.people_alt,
-                  color: theme.colorScheme.primary, 
-                  onTap: () { context.pushNamed("tenantsview");},
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: NormalCard(
-                  title: "Payments",
-                  icon: Icons.payment,
-                  color: theme.colorScheme.primary, 
-                  onTap: () { context.pushNamed("paymentsview");},
-                ),
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: NormalCard(
+                      title: "Property",
+                      icon: Icons.home,
+                      color: theme.colorScheme.primary, 
+                      onTap: () { context.pushNamed("propertyview");},
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: NormalCard(
+                      title: "Tenants",
+                      icon: Icons.people_alt,
+                      color: theme.colorScheme.primary, 
+                      onTap: () { context.pushNamed("tenantsview");},
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: NormalCard(
-                  title: "Reports",
-                  icon: Icons.analytics,
-                  color: theme.colorScheme.primary, 
-                  onTap: () {},
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: NormalCard(
+                      title: "Payments",
+                      icon: Icons.payment,
+                      color: theme.colorScheme.primary, 
+                      onTap: () { context.pushNamed("paymentsview");},
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: NormalCard(
+                      title: "Reports",
+                      icon: Icons.analytics,
+                      color: theme.colorScheme.primary, 
+                      onTap: () {},
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0.0),
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: NormalCard(
+            //           title: "Settings",
+            //           icon: Icons.settings,
+            //           color: theme.colorScheme.primary, 
+            //           onTap: () { context.pushNamed("settings");},
+            //         ),
+            //       ),
+            //       const SizedBox(width: 16),
+            //       Expanded(
+            //         child: NormalCard(
+            //           title: "Profile",
+            //           icon: Icons.person,
+            //           color: theme.colorScheme.primary, 
+            //           onTap: () { context.pushNamed("profile");},
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+          ],
         ),
-        // Padding(
-        //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0.0),
-        //   child: Row(
-        //     children: [
-        //       Expanded(
-        //         child: NormalCard(
-        //           title: "Settings",
-        //           icon: Icons.settings,
-        //           color: theme.colorScheme.primary, 
-        //           onTap: () { context.pushNamed("settings");},
-        //         ),
-        //       ),
-        //       const SizedBox(width: 16),
-        //       Expanded(
-        //         child: NormalCard(
-        //           title: "Profile",
-        //           icon: Icons.person,
-        //           color: theme.colorScheme.primary, 
-        //           onTap: () { context.pushNamed("profile");},
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
       ],
     );
   }
@@ -264,8 +286,8 @@ class NormalCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.inversePrimary , 
-          borderRadius: BorderRadius.circular(20),
+          color: theme.colorScheme.secondary , 
+          borderRadius: BorderRadius.circular(5),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -278,13 +300,13 @@ class NormalCard extends StatelessWidget {
                   Icon(
                     icon,
                     size: size.width * 0.1,
-                    color: theme.canvasColor, 
+                    // color: theme.canvasColor, 
                   ),
                   const SizedBox(height: 8),
                   Text(
                     title,
                     style: FontStyles.heading.copyWith(
-                      color: theme.canvasColor, 
+                      // color: theme.canvasColor, 
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

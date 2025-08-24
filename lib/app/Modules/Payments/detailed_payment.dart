@@ -46,7 +46,7 @@ class DetailedPayment extends ConsumerWidget {
           'Payment Details',
           style: FontStyles.heading.copyWith(fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.secondary,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),

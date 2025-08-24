@@ -16,7 +16,7 @@ class DetailedProperty extends ConsumerWidget {
       appBar: AppBar(
         title: Text(property.name ?? "Property Details"),
         elevation: 0,
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.secondary,
       ),
       body: SingleChildScrollView(
         child: Column(

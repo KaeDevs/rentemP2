@@ -25,7 +25,7 @@ class TenantsView extends ConsumerWidget {
           ),
         ),
         elevation: 0,
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.secondary,
       ),
       body: ValueListenableBuilder<Box<TenantModel>>(
         valueListenable: HiveService.tenantsBox.listenable(),

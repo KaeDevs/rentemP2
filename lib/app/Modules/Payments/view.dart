@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rentem/main.dart';
 import 'package:rentem/app/Data/Models/payment_model.dart';
-import 'package:rentem/app/Modules/Payments/add_payment.dart';
-import 'package:rentem/app/Modules/Payments/detailed_payment.dart';
 import '../../Utils/font_styles.dart';
 
 class PaymentsView extends ConsumerWidget {
@@ -14,7 +12,9 @@ class PaymentsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+    final tenants = HiveService.tenantsBox;
+    final properties = HiveService.propertiesBox;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -24,7 +24,7 @@ class PaymentsView extends ConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.secondary,
         elevation: 0,
       ),
       body: ValueListenableBuilder<Box<PaymentModel>>(
@@ -47,6 +47,21 @@ class PaymentsView extends ConsumerWidget {
             itemCount: box.length,
             itemBuilder: (context, index) {
               final payment = box.getAt(index);
+              if (payment == null) return const SizedBox();
+
+              // lookup tenant
+              final tenant = tenants.values.firstWhere(
+                (t) => t.id == payment.tenantId,
+                
+              );
+              final tenantName = tenant?.name ?? 'Unknown Tenant';
+
+              // lookup property (via tenant.propertyId)
+              final propertyName = tenant?.propertyId != null
+                  ? (properties.get(tenant!.propertyId)?.name ??
+                        'Unknown Property')
+                  : 'Unassigned Property';
+
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
                 child: ListTile(
@@ -55,12 +70,15 @@ class PaymentsView extends ConsumerWidget {
                     color: theme.colorScheme.primary,
                   ),
                   title: Text(
-                    '₹${payment?.amount}',
+                    '₹${payment.amount.toStringAsFixed(2)}',
                     style: FontStyles.heading.copyWith(fontSize: 18),
                   ),
                   subtitle: Text(
-                    payment?.description ?? '',
-                    style: FontStyles.body,
+                    '$tenantName • $propertyName',
+                    style: FontStyles.body.copyWith(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -69,10 +87,8 @@ class PaymentsView extends ConsumerWidget {
                     size: 16,
                     color: theme.colorScheme.onSurface.withOpacity(0.3),
                   ),
-                  onTap: () => context.pushNamed(
-                    'paymentdetails',
-                    extra: payment,
-                  ),
+                  onTap: () =>
+                      context.pushNamed('paymentdetails', extra: payment),
                 ),
               );
             },

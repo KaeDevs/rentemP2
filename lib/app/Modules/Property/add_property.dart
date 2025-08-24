@@ -110,55 +110,59 @@ class PropertyFormNotifier extends StateNotifier<PropertyFormState> {
 
   void clearError() => state = state.copyWith(errorMessage: null);
 
-  Future<bool> submitProperty() async {
-    if (!state.isValid) {
-      state = state.copyWith(errorMessage: "Please fill all required fields");
-      return false;
-    }
+ Future<bool> submitProperty() async {
+  if (!state.isValid) {
+    state = state.copyWith(errorMessage: "Please fill all required fields");
+    return false;
+  }
 
-    state = state.copyWith(isSubmitting: true, errorMessage: null);
+  state = state.copyWith(isSubmitting: true, errorMessage: null);
 
-    try {
-      final property = PropertyModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: state.name,
-        address: state.address,
-        rentAmount: double.parse(state.rent),
-        dueDate: state.dueDate ?? DateTime.now(),
-        tenantId: state.tenantId,
-        leaseStart: state.leaseStart ?? DateTime.now(),
-        leaseEnd:
-            state.leaseEnd ?? DateTime.now().add(const Duration(days: 365)),
-        agreementFilePath: state.agreementPath,
-        pics: state.pics,
+  try {
+    // Normalize tenant state
+    final tenantId = state.tenantId.isEmpty ? null : state.tenantId;
+    final isOccupied = tenantId != null;
+
+    final property = PropertyModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: state.name,
+      address: state.address,
+      rentAmount: double.parse(state.rent),
+      dueDate: state.dueDate ?? DateTime.now(),
+      tenantId: tenantId,
+      leaseStart: state.leaseStart ?? DateTime.now(),
+      leaseEnd: state.leaseEnd ?? DateTime.now().add(const Duration(days: 365)),
+      agreementFilePath: state.agreementPath,
+      pics: state.pics,
+      isOccupied: isOccupied,
+    );
+
+    await HiveService.propertiesBox.put(property.id, property);
+
+    // Link tenant if selected
+    if (tenantId != null) {
+      final tenant = HiveService.tenantsBox.values.firstWhere(
+        (t) => t.id == tenantId,
+        orElse: () => TenantModel(id: '', name: '', contact: ''),
       );
-
-      await HiveService.propertiesBox.put(property.id, property);
-
-      // Link tenant if selected
-      if ((state.tenantId).isNotEmpty) {
-        final tenant = HiveService.tenantsBox.values.firstWhere(
-          (t) => t.id == state.tenantId,
-          orElse: () => TenantModel(id: '', name: '', contact: ''),
-        );
-        if (tenant.id.isNotEmpty) {
-          final saved = HiveService.propertiesBox.get(property.id) ?? property;
-          await PropertyService().assignTenant(property: saved, tenant: tenant);
-        }
+      if (tenant.id.isNotEmpty) {
+        final saved = HiveService.propertiesBox.get(property.id) ?? property;
+        await PropertyService().assignTenant(property: saved, tenant: tenant);
       }
-      return true;
-    } catch (e) {
-      state = state.copyWith(
-        isSubmitting: false,
-        errorMessage: "Failed to save property: ${e.toString()}",
-      );
-      return false;
-    } finally {
-      state = state.copyWith(isSubmitting: false);
     }
+
+    return true;
+  } catch (e) {
+    state = state.copyWith(
+      isSubmitting: false,
+      errorMessage: "Failed to save property: ${e.toString()}",
+    );
+    return false;
+  } finally {
+    state = state.copyWith(isSubmitting: false);
   }
 }
-
+}
 // Main widget
 class AddProperty extends ConsumerStatefulWidget {
   const AddProperty({super.key});

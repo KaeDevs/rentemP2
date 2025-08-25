@@ -146,7 +146,11 @@ class PropertyView extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      IconButton(
+      IconButton(
+        icon: Icon(Icons.edit, color: theme.colorScheme.primary),
+        onPressed: () => context.pushNamed('addproperty', extra: property),
+      ),
+      IconButton(
         icon: Icon(Icons.delete, color: theme.colorScheme.error),
         onPressed: () async {
           final confirm = await showDialog<bool>(

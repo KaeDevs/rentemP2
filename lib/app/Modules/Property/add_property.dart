@@ -110,7 +110,7 @@ class PropertyFormNotifier extends StateNotifier<PropertyFormState> {
 
   void clearError() => state = state.copyWith(errorMessage: null);
 
- Future<bool> submitProperty() async {
+  Future<bool> submitProperty() async {
   if (!state.isValid) {
     state = state.copyWith(errorMessage: "Please fill all required fields");
     return false;
@@ -165,7 +165,8 @@ class PropertyFormNotifier extends StateNotifier<PropertyFormState> {
 }
 // Main widget
 class AddProperty extends ConsumerStatefulWidget {
-  const AddProperty({super.key});
+  final PropertyModel? existingProperty;
+  const AddProperty({super.key, this.existingProperty});
   static const int totalSteps = 9;
   @override
   ConsumerState<AddProperty> createState() => _AddPropertyState();
@@ -173,6 +174,25 @@ class AddProperty extends ConsumerStatefulWidget {
 
 class _AddPropertyState extends ConsumerState<AddProperty> {
   static const int totalSteps = 9;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize form with existing property data
+    if (widget.existingProperty != null) {
+      final property = widget.existingProperty!;
+      ref.read(propertyFormProvider.notifier)
+        ..updateName(property.name ?? '')
+        ..updateAddress(property.address)
+        ..updateRent(property.rentAmount.toStringAsFixed(0))
+        ..updateTenantId(property.tenantId ?? '')
+        ..updateDueDate(property.dueDate)
+        ..updateLeaseStart(property.leaseStart)
+        ..updateLeaseEnd(property.leaseEnd)
+        ..updateAgreementPath(property.agreementFilePath)
+        ..addPicture(property.pics?.first ?? '');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,6 +218,7 @@ class _AddPropertyState extends ConsumerState<AddProperty> {
             currentStep: currentStep,
             isSubmitting: formState.isSubmitting,
             canProceed: _canProceedFromStep(currentStep, formState),
+            existingProperty: widget.existingProperty,
           ),
         ],
       ),
@@ -371,11 +392,13 @@ class _NavigationButtons extends ConsumerWidget {
   final int currentStep;
   final bool isSubmitting;
   final bool canProceed;
+  final PropertyModel? existingProperty;
 
   const _NavigationButtons({
     required this.currentStep,
     required this.isSubmitting,
     required this.canProceed,
+    this.existingProperty,
   });
 
   @override

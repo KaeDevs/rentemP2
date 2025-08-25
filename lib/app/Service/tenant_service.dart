@@ -34,4 +34,9 @@ class TenantService {
     verifyInitialized();
     return _tenantBox.values.firstWhereOrNull((t) => t.id == tenantId);
   }
+
+  Future<void> updateTenant(TenantModel tenant) async {
+    verifyInitialized();
+    await tenant.save();
+  }
 }
